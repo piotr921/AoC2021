@@ -6,12 +6,9 @@ fun main(args: Array<String>) {
     val allFields = args.copyOfRange(1, args.size).mapIndexed { index: Int, value: String -> BoardField(index, value) }
 
     var index = 0
-    var boardsSummary = (0..99)
-        .map { i -> Board(allFields.subList(25 * i, (25 * i) + 25)) }
-        .filter { b -> !b.hasWon() }
-        .toMutableList()
+    var boardsSummary = mutableListOf<Board>()
 
-    while (boardsSummary.size > 1) {
+    while (boardsSummary.size != 1) {
         println("Checking for index: $index")
         allFields.forEach { f -> f.checkNumber(randomNumbers[index]) }
 
@@ -20,6 +17,7 @@ fun main(args: Array<String>) {
             .filter { b -> !b.hasWon() }
             .toMutableList()
 
+        println("Still ${boardsSummary.size} not won")
         index++
     }
 
