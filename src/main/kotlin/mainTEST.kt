@@ -1,67 +1,47 @@
+// 169463 - too low
+// 188287 - too low
 fun main(args: Array<String>) {
-    println("Hello Task TEST!")
+    println("Hello Task 11!")
 
-    val genA = Fish(79)
+    val result = args[0]
+        .split(",")
+        .map { s -> s.toInt() }
+        .groupingBy { it }
+        .eachCount()
+        .mapValues { calculateNumberOfFishFromParent(80 - it.key) * it.value }
+        .map { it.value }
+        .sumBy { it }
 
-    val genB = genA.noOfChildrenList()
-    println("No of children: ${genB.size}")
-//    genB.forEach { x -> println(x) }
+    println("RESULT= $result")
+}
 
-    val genC = genB.flatMap { gb -> gb.noOfChildrenList() }
-    println("No of children: ${genC.size}")
-//    genC.forEach { x -> println(x) }
-
-    val genD = genC.flatMap { gc -> gc.noOfChildrenList() }
-    println("No of children: ${genD.size}")
-//    genD .forEach { x -> println(x) }
-
-    val genE = genD.flatMap { gd -> gd.noOfChildrenList() }
-    println("No of children: ${genE.size}")
-//    genE .forEach { x -> println(x) }
-
-    val genF = genE.flatMap { ge -> ge.noOfChildrenList() }
-    println("No of children: ${genF.size}")
-
-    val genG = genF.flatMap { gf -> gf.noOfChildrenList() }
-    println("No of children: ${genG.size}")
-
-    val genH = genG.flatMap { gg -> gg.noOfChildrenList() }
-    println("No of children: ${genH.size}")
-
-    val genI = genH.flatMap { gh -> gh.noOfChildrenList() }
-    println("No of children: ${genI.size}")
-
-    val genJ = genI.flatMap { gi -> gi.noOfChildrenList() }
-    println("No of children: ${genJ.size}")
-
-    val firstResult = 1 + 11 + 45 + 120 + 210 + 126 + 84 + 36 + 9
-    println("FIRST RESULT = $firstResult")
-
+fun calculateNumberOfFishFromParent(parentDaysAlive: Int): Int {
     var childrenCounter = 0
-    var generation = mutableListOf<Fish>()
-    generation.add(Fish(79))
-    for (i in 79 downTo 0 step 9) {
+    var generation = mutableListOf<LanternFish>()
+    generation.add(LanternFish(parentDaysAlive))
+    for (i in parentDaysAlive downTo 0 step 9) {
         childrenCounter += generation.size
         generation = generation.flatMap { g -> g.noOfChildrenList() }.toMutableList()
     }
 
-    println("SECOND RESULT = $childrenCounter")
+    println("From 1 fish with ${80 - parentDaysAlive} days to delivery at start will grow to: $childrenCounter fish and the end")
+    return childrenCounter
 }
 
-class Fish(private val daysAlive: Int) {
+class LanternFish(private val daysAlive: Int) {
 
-    fun noOfChildrenList(): MutableList<Fish> {
-        var result = mutableListOf<Fish>()
+    fun noOfChildrenList(): MutableList<LanternFish> {
+        var result = mutableListOf<LanternFish>()
 
         val firstBirth = daysAlive - 9
         for (i in firstBirth downTo 0 step 7) {
-            result.add(Fish(i))
+            result.add(LanternFish(i))
         }
 
         return result
     }
 
     override fun toString(): String {
-        return "Fish(daysAlive=$daysAlive)"
+        return "LanternFish(daysAlive=$daysAlive)"
     }
 }
