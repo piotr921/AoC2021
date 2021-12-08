@@ -1,4 +1,6 @@
-const val DAYS = 256
+// RESULT= {1=79, 5=71, 3=52, 2=42, 4=56}
+
+const val DAYS = 80
 
 fun main(args: Array<String>) {
     println("Hello Task 11!")
@@ -18,52 +20,37 @@ fun main(args: Array<String>) {
 fun calculateNumberOfFishFromParent(initValue: Int): Int {
 
     var result = 1
-    var generation = LanternFishParent(initValue).calcChildren()
+    var generation = calcChildren(initValue)
     result += generation.size
 
     while (generation.size > 0) {
-        generation = generation.flatMap { g -> g.noOfChildrenList() }.toMutableList()
+        generation = generation.flatMap { g -> noOfChildrenList(g) }.toMutableList()
         result += generation.size
     }
 
     return result
 }
+fun calcChildren(initValue: Int): MutableList<Int> {
+    val result = mutableListOf<Int>()
 
-class LanternFishParent(private val initValue: Int) {
-
-    fun calcChildren(): MutableList<LanternFish> {
-        val result = mutableListOf<LanternFish>()
-
-        for (i in (DAYS - initValue) downTo 0 step 7) {
-            // because new fish is appears one day after birth
-            if (i - 1 >= 0) {
-                result.add(LanternFish(i))
-            }
+    for (i in (DAYS - initValue) downTo 0 step 7) {
+        // because new fish is appears one day after birth
+        if (i - 1 >= 0) {
+            result.add(i)
         }
-
-        return result
     }
 
-    override fun toString(): String {
-        return "LanternFishParent(initValue=$initValue)"
-    }
+    return result
 }
 
-class LanternFish(private val daysAlive: Int) {
-
-    fun noOfChildrenList(): MutableList<LanternFish> {
-        return if(daysAlive <= 9) {
-            emptyList<LanternFish>().toMutableList()
-        } else {
-            val children = mutableListOf<LanternFish>()
-            for (i in daysAlive - 9 downTo 1 step 7) {
-                children.add(LanternFish(i))
-            }
-            children
+fun noOfChildrenList(daysAlive: Int): MutableList<Int> {
+    return if(daysAlive <= 9) {
+        emptyList<Int>().toMutableList()
+    } else {
+        val children = mutableListOf<Int>()
+        for (i in daysAlive - 9 downTo 1 step 7) {
+            children.add(i)
         }
-    }
-
-    override fun toString(): String {
-        return "LanternFish(daysAlive=$daysAlive)"
+        children
     }
 }
