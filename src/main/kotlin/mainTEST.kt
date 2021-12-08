@@ -33,6 +33,19 @@ fun main(args: Array<String>) {
 
     val genJ = genI.flatMap { gi -> gi.noOfChildrenList() }
     println("No of children: ${genJ.size}")
+
+    val firstResult = 1 + 11 + 45 + 120 + 210 + 126 + 84 + 36 + 9
+    println("FIRST RESULT = $firstResult")
+
+    var childrenCounter = 0
+    var generation = mutableListOf<Fish>()
+    generation.add(Fish(79))
+    for (i in 79 downTo 0 step 9) {
+        childrenCounter += generation.size
+        generation = generation.flatMap { g -> g.noOfChildrenList() }.toMutableList()
+    }
+
+    println("SECOND RESULT = $childrenCounter")
 }
 
 class Fish(private val daysAlive: Int) {
