@@ -3,33 +3,30 @@ fun main(args: Array<String>) {
 
     val randomNumbers = args[0].split(",")
     val allFields = args.copyOfRange(1, args.size).mapIndexed { index: Int, value: String -> BoardField(index, value) }
+    val allBoards = allFields.windowed(25, 25).map { list -> Board(list) }
 
-    var index = 0
-    var boardsSummary = mutableListOf<Board>()
-    while (boardsSummary.size < 1) {
-        println("Checking for index: $index")
-        allFields.forEach { f -> f.checkNumber(randomNumbers[index]) }
+    var firstWinningNumber = 0
+    var wonIndex = 0
+    for (nextNumber in randomNumbers) {
+        allBoards.forEach { board -> board.fields.forEach { bf -> bf.checkNumber(nextNumber) } }
+        val wonList = allBoards.map { board -> board.hasWon() }
 
-        boardsSummary = (0..99)
-            .map { i -> Board(allFields.subList(25 * i, (25 * i) + 25)) }
-            .filter { b -> b.hasWon() }
-            .toMutableList()
-
-        index++
+        wonIndex = wonList.indexOf(true)
+        if (wonList.any { it }) {
+            firstWinningNumber = nextNumber.toInt()
+            break
+        }
     }
 
-    val multiplier = randomNumbers[index - 1].toInt()
+    println("firstWinningNumber=$firstWinningNumber")
+    println("wonIndex=$wonIndex")
 
-    val sumOfUncheckedElements = boardsSummary
-        .filter { b -> b.hasWon() }
-        .flatMap { b -> b.fields }
+    val sumOfUncheckedElements = allBoards[wonIndex]
+        .fields
         .filter { f -> !f.checked }
         .sumOf { bf -> bf.fieldNumber.toInt() }
+    println("sumOfUncheckedElements=$sumOfUncheckedElements")
 
-    println("sumOfUncheckedElements: $sumOfUncheckedElements")
-    println("multiplier: $multiplier")
-
-    val result = multiplier * sumOfUncheckedElements
+    val result = firstWinningNumber * sumOfUncheckedElements
     println("RESULT = $result")
-
 }
