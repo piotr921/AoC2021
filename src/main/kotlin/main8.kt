@@ -1,42 +1,35 @@
-// 12648 - too low
 fun main(args: Array<String>) {
     println("Hello Task 8!")
 
     val randomNumbers = args[0].split(",")
     val allFields = args.copyOfRange(1, args.size).mapIndexed { index: Int, value: String -> BoardField(index, value) }
+    val allBoards = allFields.windowed(25, 25).map { list -> Board(list) }
 
-    var index = 0
-    var boardsSummary = mutableListOf<Board>()
+    var lastWinningNumber = 0
+    var notWonIndex = 0
+    for (nextNumber in randomNumbers) {
+        allBoards.forEach { board -> board.fields.forEach { bf -> bf.checkNumber(nextNumber) } }
+        val wonList = allBoards.map { board -> board.hasWon() }
 
-    while (boardsSummary.size != 1) {
-        println("Checking for index: $index")
-        allFields.forEach { f -> f.checkNumber(randomNumbers[index]) }
+        if (wonList.indexOf(false) > 0) {
+            notWonIndex = wonList.indexOf(false)
+        }
 
-        boardsSummary = (0..99)
-            .map { i -> Board(allFields.subList(25 * i, (25 * i) + 25)) }
-            .filter { b -> !b.hasWon() }
-            .toMutableList()
-
-        println("Still ${boardsSummary.size} not won")
-        index++
+        if (wonList.all { it }) {
+            lastWinningNumber = nextNumber.toInt()
+            break
+        }
     }
 
-    val multiplier = randomNumbers[index - 1].toInt()
+    println("lastWinningNumber=$lastWinningNumber")
+    println("notWonIndex=$notWonIndex")
 
-    boardsSummary
-        .flatMap { bs -> bs.fields }
-        .forEach { bs -> println(bs) }
-
-    val sumOfUncheckedElements = boardsSummary
-        .filter { b -> !b.hasWon() }
-        .flatMap { b -> b.fields }
+    val sumOfUncheckedElements = allBoards[notWonIndex]
+        .fields
         .filter { f -> !f.checked }
         .sumOf { bf -> bf.fieldNumber.toInt() }
+    println("sumOfUncheckedElements=$sumOfUncheckedElements")
 
-    println("sumOfUncheckedElements: $sumOfUncheckedElements")
-    println("multiplier: $multiplier")
-
-    val result = multiplier * sumOfUncheckedElements
+    val result = lastWinningNumber * sumOfUncheckedElements
     println("RESULT = $result")
-
 }
