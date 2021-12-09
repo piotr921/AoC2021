@@ -3,7 +3,7 @@ fun main(args: Array<String>) {
 
     var overallSum = 0
     for (i in args.indices) {
-        val sumFromRow = isLocalMinimumInRow(args, i)
+        val sumFromRow = findMinimumsInRow(args, i)
             .map { mi -> args[i].substring(mi, mi + 1).toInt() }
             .map { value -> value + 1 } // calc risk level
             .toList()
@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
     println("overallSum=$overallSum")
 }
 
-private fun isLocalMinimumInRow(area: Array<String>, row: Int): List<Int> {
+private fun findMinimumsInRow(area: Array<String>, row: Int): List<Int> {
 
     var result = mutableListOf<Int>()
     area[row]
