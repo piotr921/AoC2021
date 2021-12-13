@@ -5,20 +5,47 @@ fun main(args: Array<String>) {
     val cleaned = args.filter { a -> (a != "fold") && (a != "along") }
     val indexOfFirst = cleaned.indexOfFirst { a -> a.startsWith("x") || a.startsWith("y") }
     val folds = cleaned.subList(indexOfFirst, cleaned.size)
+    val initData = cleaned.subList(0, indexOfFirst).map { arg -> arg.split(",").map { s -> s.toInt() } }
+        .map { l -> Point(l[0], l[1]) }
 
-    val initData = cleaned.subList(0, indexOfFirst).map { arg -> arg.split(",").map { s -> s.toInt() } }.map { l -> Point(l[0], l[1]) }
-//    val foldY = folds[0].last().toString().toInt()
-//    val afterFoldY = foldY(initData, foldY)
-    println("maxX=${maxX(initData)}")
+    var processing = initData
+    for (i in folds) {
+        val axis = i.substringBefore("=")
+        val value = i.substringAfter("=").toInt()
+        if (axis == "x") {
+            processing = foldX(processing, value)
+        } else {
+            processing = foldY(processing, value)
+        }
+    }
 
-    val foldX = folds[0].substringAfter("=").toInt()
-    println("foldX=$foldX")
-
-    val afterFoldX = foldX(initData, foldX)
-//    afterFoldX.forEach{ println(it)}
-
-    val size = afterFoldX.size
+    val size = processing.size
     println("RESULT=$size")
+    val finalX = maxX(processing)
+    val finalY = maxY(processing)
+    println("X=$finalX")
+    println("Y=$finalY")
+//    println("RESULT=$size")
+//    processing.forEach { println(it)}
+
+    for (y in 0..finalY) {
+        for (x in 0..finalX) {
+            if (processing.contains(Point(x, y))) {
+                print("#")
+            } else {
+                print(".")
+            }
+        }
+        println()
+    }
+
+    #..# .##.# .#..# ...## .###...### ...## .####
+    #..# .#.#. .#..# ....# .#.## .#### ....# ....#
+    #### .##...#..# .#..# .#### .#### .#.## .####
+    #..# .#.## .##.#..### .#### .####..###..###
+    #..# .###. .#..# .#..# .#..# .#..# .#..# .#.#.
+    #..# .#.## .####..### .#### .####..##. .##.#
+
 }
 
 fun foldY(initData: List<Point>, fold: Int): List<Point> {
@@ -45,11 +72,11 @@ fun foldX(initData: List<Point>, fold: Int): List<Point> {
     return notChangedRight + leftMapped
 }
 
-private fun maxY(data: List<Point>) : Int {
-     return data.map { p -> p.y }.maxOrNull()?.or(0)!!
+private fun maxY(data: List<Point>): Int {
+    return data.map { p -> p.y }.maxOrNull()?.or(0)!!
 }
 
-private fun maxX(data: List<Point>) : Int {
+private fun maxX(data: List<Point>): Int {
     return data.map { p -> p.x }.maxOrNull()?.or(0)!!
 }
 
