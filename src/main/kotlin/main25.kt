@@ -1,11 +1,19 @@
-// 732 - too high
+//#..#.    #..#.    #..#.       ..##.    .##..    .##..    ..##.           ####
+//#..#.    #.#..    #..#.       ...#.    #..#.    #..#.    ...#.           ...#
+//####.    ##...    #..#.       ...#.    #....    #..#.    ...#.           ..#.
+//#..#.    #.#..    #..#.       ...#.    #.##.    ####.    ...#.           .#..
+//#..#.    #.#..    #..#.       #..#.    #..#.    #..#.    #..#.           #...
+//#..#.    #..#.    .##..       .##..    .###.    #..#.    .##..           ####
+
 fun main(args: Array<String>) {
     println("Hello Task 25!")
 
     val cleaned = args.filter { a -> (a != "fold") && (a != "along") }
     val indexOfFirst = cleaned.indexOfFirst { a -> a.startsWith("x") || a.startsWith("y") }
     val folds = cleaned.subList(indexOfFirst, cleaned.size)
-    val initData = cleaned.subList(0, indexOfFirst).map { arg -> arg.split(",").map { s -> s.toInt() } }
+    val initData = cleaned.subList(0, indexOfFirst)
+        .map { arg -> arg.split(",")
+        .map { s -> s.toInt() } }
         .map { l -> Point(l[0], l[1]) }
 
     var processing = initData
@@ -23,11 +31,6 @@ fun main(args: Array<String>) {
     println("RESULT=$size")
     val finalX = maxX(processing)
     val finalY = maxY(processing)
-    println("X=$finalX")
-    println("Y=$finalY")
-//    println("RESULT=$size")
-//    processing.forEach { println(it)}
-
     for (y in 0..finalY) {
         for (x in 0..finalX) {
             if (processing.contains(Point(x, y))) {
@@ -38,35 +41,25 @@ fun main(args: Array<String>) {
         }
         println()
     }
-
-    #..# .##.# .#..# ...## .###...### ...## .####
-    #..# .#.#. .#..# ....# .#.## .#### ....# ....#
-    #### .##...#..# .#..# .#### .#### .#.## .####
-    #..# .#.## .##.#..### .#### .####..###..###
-    #..# .###. .#..# .#..# .#..# .#..# .#..# .#.#.
-    #..# .#.## .####..### .#### .####..##. .##.#
-
 }
 
 fun foldY(initData: List<Point>, fold: Int): List<Point> {
-    val maxY = maxY(initData)
     val notChangedTop = initData.filter { p -> p.y < fold }
 
     val bottomMapped = initData
         .filter { p -> p.y > fold }
-        .map { point -> Point(point.x, maxY - point.y) }
+        .map { point -> Point(point.x, (fold * 2) - point.y) }
         .filter { point -> !notChangedTop.contains(point) }
 
     return notChangedTop + bottomMapped
 }
 
 fun foldX(initData: List<Point>, fold: Int): List<Point> {
-    val maxX = maxX(initData)
     val notChangedRight = initData.filter { p -> p.x < fold }
 
     val leftMapped = initData
         .filter { p -> p.x > fold }
-        .map { point -> Point(maxX - point.x, point.y) }
+        .map { point -> Point((fold * 2) - point.x, point.y) }
         .filter { point -> !notChangedRight.contains(point) }
 
     return notChangedRight + leftMapped
@@ -104,4 +97,3 @@ class Point(val x: Int, val y: Int) {
         return result
     }
 }
-
