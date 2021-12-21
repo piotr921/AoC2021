@@ -1,10 +1,11 @@
 fun main(args: Array<String>) {
     println("Hello Task 27!")
 
-    var input = "PPFCHPFNCKOKOSBVCFPP"
+//    var input = "PPFCHPFNCKOKOSBVCFPP"
+    var input = "PP"
 //    var input = "NNCB"
 
-    for (i in 1..10) {
+    for (i in 1..40) {
         println(i)
         val windowed = input.windowed(2)
         input = windowed.joinToString { pair -> pair.first().toString() + findNextElement(pair) }.replace(", ", "")
