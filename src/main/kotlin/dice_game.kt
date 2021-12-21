@@ -1,4 +1,3 @@
-// too high
 fun main(args: Array<String>) {
     println("Let's play game!")
 
